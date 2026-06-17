@@ -69,7 +69,7 @@ mvn clean compile
     1. Отправить POST-запрос:
         * На `http://localhost:8000/index.php?rest_route=/wp/v2/posts`
         * В теле запроса передать: `{"title": "TestPost1", "status": "draft", "content": "Test content"}`
-    2. Зафиксировать `id` из ответа
+    2. Зафиксировать `id` поста из ответа
 
 - **Ожидаемый результат**:
     1. Код ответа `201 Created`
@@ -148,7 +148,7 @@ mvn clean compile
     3. Запрос `SELECT post_title, post_content FROM wp_posts WHERE ID = {id}` находит строку с пустым `post_title`
 
 - **Постусловие**:
-    1. Удалить созданный пост: `DELETE FROM wp_posts WHERE ID = {id} OR post_parent = %s`
+    1. Удалить созданный пост: `DELETE FROM wp_posts WHERE ID = {id} OR post_parent = {id}`
 
 - **Тестовые данные**:
     1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
@@ -192,3 +192,93 @@ mvn clean compile
     1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
     2. `force` — `True`
 
+### Тест-кейс №07. Создание комментария к существующему посту
+
+- **Предусловие**:
+    1. Авторизоваться (`Firstname.Lastname:123-Test`)
+    2. Создать тестовый пост: `INSERT INTO wp_posts (post_title, post_content, post_status) VALUES 
+    ('Test Title', 'Test Content', 'publish')`
+    3. Зафиксировать `id` поста
+
+- **Шаги**:
+    1. Отправить POST-запрос:
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/comments`
+        * В теле запроса передать: `{"post": {post_id}, "author_name": "Firstname.Lastname", 
+        "author_email": "Firstname.Lastname@simbirsoft.com", "content": "Test comment", "status": "approved"}`
+    2. Зафиксировать `id` комментария из ответа
+
+- **Ожидаемый результат**:
+    1. Код ответа `201 Created`
+    2. Тело ответа содержит переданные параметры
+    3. Запрос `SELECT comment_author, comment_content FROM wp_comments WHERE comment_ID = {id}` находит строку с
+       `comment_author = Firstname.Lastname`
+
+- **Постусловие**:
+    1. Удалить созданный комментарий: `DELETE FROM wp_comments WHERE comment_ID = {id}`
+    2. Удалить созданный пост: `DELETE FROM wp_posts WHERE ID = {post_id} OR post_parent = {post_id}`
+
+- **Тестовые данные**:
+    1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
+    2. `author_name` — `Firstname.Lastname`
+    3. `author_email` — `Firstname.Lastname@simbirsoft.com`
+    4. `content` — `Test Comment`
+    5. `status` — `approved`
+
+### Тест-кейс №08. Изменение существующего комментария
+
+- **Предусловие**:
+    1. Авторизоваться (`Firstname.Lastname:123-Test`)
+    2. Создать тестовый пост: `INSERT INTO wp_posts (post_title, post_content, post_status) VALUES 
+    ('Test Title', 'Test Content', 'publish')`
+    3. Зафиксировать `id` поста
+    4. Создать тестовый комментарий: `INSERT INTO wp_comments (comment_post_ID, comment_author, comment_author_email, 
+    comment_content, comment_approved) VALUES ({post_id}, 'Firstname.Lastname', 'Firstname.Lastname@simbirsoft.com', 
+    'Test comment content', '1')`
+    5. Зафиксировать `id` комментария
+
+- **Шаги**:
+    1. Отправить POST-запрос:
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/comments/{id}`
+        * В теле запроса передать: `{"content": "Updated comment", "author_name": "Test User"}`
+
+- **Ожидаемый результат**:
+    1. Код ответа `200 OK`
+    2. Тело ответа содержит переданные параметры
+    3. Запрос `SELECT comment_author, comment_content FROM wp_comments WHERE comment_ID = {id}` находит строку с
+       `comment_content = Updated comment`
+
+- **Постусловие**:
+    1. Удалить созданный комментарий: `DELETE FROM wp_comments WHERE comment_ID = {id}`
+    2. Удалить созданный пост: `DELETE FROM wp_posts WHERE ID = {post_id} OR post_parent = {post_id}`
+
+- **Тестовые данные**:
+    1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
+    2. `content` — `Updated comment`
+    3. `author_name` — `Test user`
+
+### Тест-кейс №09. Удаление существующего комментария
+
+- **Предусловие**:
+    1. Авторизоваться (`Firstname.Lastname:123-Test`)
+    2. Создать тестовый пост: `INSERT INTO wp_posts (post_title, post_content, post_status) VALUES 
+    ('Test Title', 'Test Content', 'publish')`
+    3. Зафиксировать `id` поста
+    4. Создать тестовый комментарий: `INSERT INTO wp_comments (comment_post_ID, comment_author, comment_author_email, 
+    comment_content, comment_approved) VALUES ({post_id}, 'Firstname.Lastname', 'Firstname.Lastname@simbirsoft.com', 
+    'Test comment content', '1')`
+    5. Зафиксировать `id` комментария
+
+- **Шаги**:
+    1. Отправить DELETE-запрос:
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/comments/{id}?force=true`
+
+- **Ожидаемый результат**:
+    1. Код ответа `200 OK`
+    2. Запрос `SELECT COUNT(*) FROM wp_comments WHERE comment_ID = {id}` возвращает `0`
+
+- **Постусловие**:
+    1. Удалить созданный пост: `DELETE FROM wp_posts WHERE ID = {post_id} OR post_parent = {post_id}`
+
+- **Тестовые данные**:
+    1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
+    2. `force` — `true`

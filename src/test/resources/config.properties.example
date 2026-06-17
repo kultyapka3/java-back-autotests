@@ -1,0 +1,11 @@
+# API
+wp.api.url=http://localhost:8000
+wp.api.user=Firstname.Lastname
+wp.api.pass=123-Asd
+
+# DB
+db.host=localhost
+db.port=3306
+db.name=wordpress
+db.user=wordpress
+db.pass=wordpress

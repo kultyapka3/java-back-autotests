@@ -1,5 +1,6 @@
 .idea/
 .mvn/
+.allure/
 *.iml
 *.iws
 *.ipr
@@ -31,6 +32,9 @@ $RECYCLE.BIN/
 
 *~
 
+src/test/resources/config.properties
+config.properties
+*-local.properties
 *.env
 local.properties
 config-local.properties

@@ -1,0 +1,23 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="API &amp; DB Autotests" parallel="methods" thread-count="1">
+
+    <listeners>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
+    <test name="D1">
+        <groups>
+            <run>
+                <include name="wp"/>
+                <include name="positive"/>
+                <include name="posts"/>
+                <include name="d1"/>
+            </run>
+        </groups>
+
+        <packages>
+            <package name="com.company.tests.d1"/>
+        </packages>
+    </test>
+
+</suite>
