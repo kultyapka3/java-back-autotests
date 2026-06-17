@@ -14,7 +14,7 @@ import com.company.db.PostRecord;
 import com.company.models.wp.PostRequest;
 import com.company.models.wp.PostResponse;
 
-/** ТК001. Создание поста */
+/** ТК01. Создание поста */
 @Epic("WordPress DB")
 @Feature("Управление постами")
 @Story("Создание поста")
@@ -22,7 +22,7 @@ import com.company.models.wp.PostResponse;
 public class CreatePostTest extends BaseTest {
 
     @Test(
-            description = "ТК001. Создание поста",
+            description = "ТК01. Создание поста",
             groups = {"wp", "positive", "posts", "d1"})
     public void testCreatePost() {
         PostRequest request =

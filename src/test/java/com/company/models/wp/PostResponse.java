@@ -2,7 +2,7 @@ package com.company.models.wp;
 
 import lombok.Data;
 
-/** DTO для ответа поста в WordPress */
+/** DTO ответа поста в WordPress */
 @Data
 public class PostResponse {
     private int id;

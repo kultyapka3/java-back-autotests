@@ -29,12 +29,17 @@ public class BaseTest {
         postsToCleanup.get().clear();
     }
 
+    /** Создание тестового поста */
+    protected int createTestPost() {
+        int postId = dbClient.createTestPost("Test Title", "Test Content", "publish");
+        postsToCleanup.get().add(postId);
+
+        return postId;
+    }
+
     @AfterMethod
     public void tearDown() {
-        List<Integer> ids = postsToCleanup.get();
-        if (ids.isEmpty()) return;
-
-        for (Integer postId : ids) {
+        for (Integer postId : postsToCleanup.get()) {
             try {
                 dbClient.deletePostById(postId);
             } catch (Exception e) {
