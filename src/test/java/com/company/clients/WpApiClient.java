@@ -1,5 +1,7 @@
 package com.company.clients;
 
+import io.qameta.allure.restassured.AllureRestAssured;
+import io.qameta.allure.Step;
 import io.restassured.authentication.PreemptiveBasicAuthScheme;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
@@ -15,24 +17,29 @@ public class WpApiClient {
     private final RequestSpecification spec;
 
     public WpApiClient() {
-        PreemptiveBasicAuthScheme authScheme = new PreemptiveBasicAuthScheme();
-        authScheme.setUserName(Config.getWpUser());
-        authScheme.setPassword(Config.getWpPass());
-
         this.spec =
                 new RequestSpecBuilder()
                         .setBaseUri(Config.getWpBaseUrl())
-                        .setAuth(authScheme)
+                        .setAuth(
+                                new PreemptiveBasicAuthScheme() {
+                                    {
+                                        setUserName(Config.getWpUser());
+                                        setPassword(Config.getWpPass());
+                                    }
+                                })
                         .setContentType(ContentType.JSON)
+                        .addFilter(new AllureRestAssured())
                         .build();
     }
 
     /** Создает пост */
+    @Step("Создание поста через API")
     public Response createPost(PostRequest request) {
         return RestAssured.given(spec).body(request).post(Config.getWpPrefix() + "/posts");
     }
 
     /** Обновляет пост */
+    @Step("Обновление поста через API с ID = {postId}")
     public Response updatePost(int postId, PostRequest request) {
         return RestAssured.given(spec)
                 .body(request)
@@ -40,6 +47,7 @@ public class WpApiClient {
     }
 
     /** Удаляет пост */
+    @Step("Удаление поста через API с ID = {postId} и force = {force}")
     public Response deletePost(int postId, boolean force) {
         return RestAssured.given(spec)
                 .queryParam("force", force)

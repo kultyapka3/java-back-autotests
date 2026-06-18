@@ -1,11 +1,11 @@
 package com.company.tests.d1;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Optional;
 
-import io.restassured.response.Response;
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
 
@@ -30,25 +30,14 @@ public class UpdatePostTest extends BaseTest {
         PostRequest updateRequest =
                 PostRequest.builder().title("Updated Title").content("Updated Content").build();
 
-        Response apiResponse =
-                Allure.step(
-                        "Обновление поста", () -> wpApiClient.updatePost(postId, updateRequest));
-
-        int statusCode = apiResponse.getStatusCode();
-        PostResponse response = apiResponse.as(PostResponse.class);
-
-        Allure.step(
-                "Проверка статуса ответа",
-                () -> assertEquals(statusCode, 200, "Ожидался 200 OK, получен " + statusCode));
-
-        Allure.step(
-                "Проверка содержимого ответа",
-                () -> {
-                    assertEquals(
-                            response.getTitleText(), "Updated Title", "Заголовок не обновился");
-                    assertEquals(
-                            response.getContentText(), "Updated Content", "Контент не обновился");
-                });
+        wpApiClient
+                .updatePost(postId, updateRequest)
+                .then()
+                .statusCode(200)
+                .body("title.raw", equalTo("Updated Title"))
+                .body("content.raw", equalTo("Updated Content"))
+                .extract()
+                .as(PostResponse.class);
 
         Allure.step(
                 "Проверка обновленного поста в БД",

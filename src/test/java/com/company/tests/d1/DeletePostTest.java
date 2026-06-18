@@ -2,7 +2,6 @@ package com.company.tests.d1;
 
 import static org.testng.Assert.assertEquals;
 
-import io.restassured.response.Response;
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
 
@@ -21,17 +20,10 @@ public class DeletePostTest extends BaseTest {
     public void testUpdatePost() {
         int postId = createTestPost();
 
-        Response apiResponse =
-                Allure.step("Удаление поста", () -> wpApiClient.deletePost(postId, true));
-
-        int statusCode = apiResponse.getStatusCode();
+        wpApiClient.deletePost(postId, true).then().statusCode(200);
 
         Allure.step(
-                "Проверка статуса ответа",
-                () -> assertEquals(statusCode, 200, "Ожидался 200 OK, получен " + statusCode));
-
-        Allure.step(
-                "Проверка, что пост был удален",
+                "Проверка, что пост был удален в БД",
                 () -> {
                     int count = dbClient.getCountPostsById(postId);
                     assertEquals(count, 0, "Пост с ID = " + postId + " не был удален");

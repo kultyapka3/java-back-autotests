@@ -1,11 +1,11 @@
 package com.company.tests.d1;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 import java.util.Optional;
 
-import io.restassured.response.Response;
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
 
@@ -32,35 +32,19 @@ public class CreatePostTest extends BaseTest {
                         .content("Test content")
                         .build();
 
-        Response apiResponse = Allure.step("Создание поста", () -> wpApiClient.createPost(request));
-        int statusCode = apiResponse.getStatusCode();
-        PostResponse response = apiResponse.as(PostResponse.class);
-
-        Allure.step(
-                "Проверка статуса ответа",
-                () -> {
-                    assertEquals(
-                            statusCode,
-                            201,
-                            "Ожидался статус 201 Created, но получен " + statusCode);
-                });
+        PostResponse response =
+                wpApiClient
+                        .createPost(request)
+                        .then()
+                        .statusCode(201)
+                        .body("title.raw", equalTo("TestPost1"))
+                        .body("content.raw", equalTo("Test content"))
+                        .body("status", equalTo("draft"))
+                        .extract()
+                        .as(PostResponse.class);
 
         int postId = response.getId();
         postsToCleanup.get().add(postId);
-
-        Allure.step(
-                "Проверка содержимого ответа",
-                () -> {
-                    assertEquals(
-                            response.getTitleText(),
-                            "TestPost1",
-                            "Заголовок в ответе не совпадает");
-                    assertEquals(response.getStatus(), "draft", "Статус в ответе не совпадает");
-                    assertEquals(
-                            response.getContentText(),
-                            "Test content",
-                            "Контент в ответе не совпадает");
-                });
 
         Allure.step(
                 "Проверка содержимого БД",

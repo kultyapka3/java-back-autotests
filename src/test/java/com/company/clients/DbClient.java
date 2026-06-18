@@ -3,6 +3,8 @@ package com.company.clients;
 import java.util.Optional;
 import java.sql.*;
 
+import io.qameta.allure.Step;
+
 import com.company.config.Config;
 import com.company.db.SqlQueries;
 import com.company.db.PostRecord;
@@ -25,6 +27,7 @@ public class DbClient {
     }
 
     /** Получает пост по ID */
+    @Step("Получение поста по ID = {postId}")
     public Optional<PostRecord> getPostById(int postId) {
         try (Connection conn = getConnection();
                 PreparedStatement stmt = conn.prepareStatement(SqlQueries.SELECT_POST_BY_ID)) {
@@ -48,6 +51,7 @@ public class DbClient {
     }
 
     /** Получает количество постов по ID */
+    @Step("Получение количества постов по ID = {postId}")
     public int getCountPostsById(int postId) {
         try (Connection conn = getConnection();
                 PreparedStatement stmt =
@@ -63,6 +67,7 @@ public class DbClient {
     }
 
     /** Удаляет пост и его ревизию по ID */
+    @Step("Удаление поста и его ревизии с ID = {postId}")
     public void deletePostById(int postId) {
         try (Connection conn = getConnection();
                 PreparedStatement stmt =
@@ -77,6 +82,7 @@ public class DbClient {
     }
 
     /** Создает тестовый пост */
+    @Step("Создание тестового поста с title = {title}, content = {content}, status = {status}")
     public int createTestPost(String title, String content, String status) {
         try (Connection conn = getConnection();
                 PreparedStatement stmt =
