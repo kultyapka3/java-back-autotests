@@ -2,6 +2,7 @@
 wp.api.url=http://localhost:8000
 wp.api.user=Firstname.Lastname
 wp.api.pass=123-Asd
+wp.api.email=Firstname.Lastname@simbirsoft.com
 
 # DB
 db.host=localhost

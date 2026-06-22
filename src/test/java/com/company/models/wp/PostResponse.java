@@ -11,13 +11,4 @@ public class PostResponse {
     private String status;
     private String slug;
     private String link;
-
-    public String getTitleText() {
-        return title != null ? title.getRendered() : null;
-    }
-
-    public String getContentText() {
-        if (content == null) return null;
-        return content.getRaw() != null ? content.getRaw() : content.getRendered();
-    }
 }

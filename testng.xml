@@ -8,9 +8,11 @@
     <test name="D1">
         <groups>
             <run>
-                <include name="wp"/>
-                <include name="positive"/>
-                <include name="posts"/>
+                <!--                <include name="wp"/>-->
+                <!--                <include name="positive"/>-->
+                <!--                <include name="negative"/>-->
+                <!--                <include name="posts"/>-->
+                <!--                <include name="comments"/>-->
                 <include name="d1"/>
             </run>
         </groups>

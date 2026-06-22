@@ -167,7 +167,7 @@ mvn clean compile
 
 - **Ожидаемый результат**:
     1. Код ответа `404 Not Found`
-    2. Тело ответа содержит `error` или `message`
+    2. Тело ответа содержит `code` или `message`
     3. Запрос `SELECT COUNT(*) FROM wp_posts WHERE ID = 9999` возвращает `0`
 
 - **Тестовые данные**:
@@ -185,7 +185,7 @@ mvn clean compile
 
 - **Ожидаемый результат**:
     1. Код ответа `404 Not Found`
-    2. Тело ответа содержит `error` или `message`
+    2. Тело ответа содержит `code` или `message`
     3. Запрос `SELECT COUNT(*) FROM wp_posts WHERE ID = 9999` возвращает `0`
 
 - **Тестовые данные**:
@@ -230,11 +230,10 @@ mvn clean compile
     1. Авторизоваться (`Firstname.Lastname:123-Test`)
     2. Создать тестовый пост: `INSERT INTO wp_posts (post_title, post_content, post_status) VALUES 
     ('Test Title', 'Test Content', 'publish')`
-    3. Зафиксировать `id` поста
-    4. Создать тестовый комментарий: `INSERT INTO wp_comments (comment_post_ID, comment_author, comment_author_email, 
+    3. Создать тестовый комментарий: `INSERT INTO wp_comments (comment_post_ID, comment_author, comment_author_email, 
     comment_content, comment_approved) VALUES ({post_id}, 'Firstname.Lastname', 'Firstname.Lastname@simbirsoft.com', 
     'Test comment content', '1')`
-    5. Зафиксировать `id` комментария
+    4. Зафиксировать `id` комментария
 
 - **Шаги**:
     1. Отправить POST-запрос:
@@ -262,11 +261,10 @@ mvn clean compile
     1. Авторизоваться (`Firstname.Lastname:123-Test`)
     2. Создать тестовый пост: `INSERT INTO wp_posts (post_title, post_content, post_status) VALUES 
     ('Test Title', 'Test Content', 'publish')`
-    3. Зафиксировать `id` поста
-    4. Создать тестовый комментарий: `INSERT INTO wp_comments (comment_post_ID, comment_author, comment_author_email, 
+    3. Создать тестовый комментарий: `INSERT INTO wp_comments (comment_post_ID, comment_author, comment_author_email, 
     comment_content, comment_approved) VALUES ({post_id}, 'Firstname.Lastname', 'Firstname.Lastname@simbirsoft.com', 
     'Test comment content', '1')`
-    5. Зафиксировать `id` комментария
+    4. Зафиксировать `id` комментария
 
 - **Шаги**:
     1. Отправить DELETE-запрос:

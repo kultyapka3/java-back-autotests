@@ -8,6 +8,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Listeners;
 
+import com.company.config.Config;
 import com.company.clients.DbClient;
 import com.company.clients.WpApiClient;
 
@@ -18,8 +19,12 @@ public class BaseTest {
     protected WpApiClient wpApiClient;
     protected DbClient dbClient;
 
-    /** Список ID постов для очистки после каждого теста */
+    /** Список ID постов для очистки */
     protected final ThreadLocal<List<Integer>> postsToCleanup =
+            ThreadLocal.withInitial(ArrayList::new);
+
+    /** Список ID комментариев для очистки */
+    protected final ThreadLocal<List<Integer>> commentsToCleanup =
             ThreadLocal.withInitial(ArrayList::new);
 
     @BeforeMethod
@@ -27,6 +32,7 @@ public class BaseTest {
         wpApiClient = new WpApiClient();
         dbClient = new DbClient();
         postsToCleanup.get().clear();
+        commentsToCleanup.get().clear();
     }
 
     /** Создание тестового поста */
@@ -37,6 +43,22 @@ public class BaseTest {
         return postId;
     }
 
+    /** Создание тестового комментария */
+    protected int createTestComment() {
+        int postId = this.createTestPost();
+        int commentId =
+                dbClient.createTestComment(
+                        postId,
+                        Config.getWpUser(),
+                        Config.getWpEmail(),
+                        "Test comment content",
+                        "1");
+        postsToCleanup.get().add(postId);
+        commentsToCleanup.get().add(commentId);
+
+        return commentId;
+    }
+
     @AfterMethod
     public void tearDown() {
         for (Integer postId : postsToCleanup.get()) {
@@ -44,9 +66,23 @@ public class BaseTest {
                 dbClient.deletePostById(postId);
             } catch (Exception e) {
                 System.err.println(
-                        "Не удалось удалить пост ID = " + postId + ". Ошибка: " + e.getMessage());
+                        "Не удалось удалить пост с ID = " + postId + ". Ошибка: " + e.getMessage());
             }
         }
+
+        for (Integer commentId : commentsToCleanup.get()) {
+            try {
+                dbClient.deleteCommentById(commentId);
+            } catch (Exception e) {
+                System.err.println(
+                        "Не удалось удалить комментарий с ID = "
+                                + commentId
+                                + ". Ошибка: "
+                                + e.getMessage());
+            }
+        }
+
         postsToCleanup.remove();
+        commentsToCleanup.remove();
     }
 }

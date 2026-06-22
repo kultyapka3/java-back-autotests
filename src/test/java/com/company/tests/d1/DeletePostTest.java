@@ -17,7 +17,7 @@ public class DeletePostTest extends BaseTest {
     @Test(
             description = "ТК03. Удаление поста",
             groups = {"wp", "positive", "posts", "d1"})
-    public void testUpdatePost() {
+    public void testDeletePost() {
         int postId = createTestPost();
 
         wpApiClient.deletePost(postId, true).then().statusCode(200);

@@ -37,6 +37,10 @@ public class Config {
         return props.getProperty("wp.api.pass");
     }
 
+    public static String getWpEmail() {
+        return props.getProperty("wp.api.email");
+    }
+
     // DB
     public static String getDbUrl() {
         return "jdbc:mysql://"
