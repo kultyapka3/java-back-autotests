@@ -105,6 +105,9 @@
                         <suiteXmlFile>testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
 
+                    <parallel>none</parallel>
+                    <useUnlimitedThreads>false</useUnlimitedThreads>
+
                     <argLine>
                         -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/1.9.25.1/aspectjweaver-1.9.25.1.jar"
                     </argLine>

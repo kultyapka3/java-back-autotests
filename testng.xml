@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="API &amp; DB Autotests" parallel="methods" thread-count="1">
+<suite name="API &amp; DB Autotests" parallel="none" thread-count="1">
 
     <listeners>
         <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
@@ -8,17 +8,24 @@
     <test name="D1">
         <groups>
             <run>
-                <include name="wp"/>
-                <include name="positive"/>
-                <include name="negative"/>
-                <include name="posts"/>
-                <include name="comments"/>
                 <include name="d1"/>
             </run>
         </groups>
 
         <packages>
             <package name="com.company.tests.d1"/>
+        </packages>
+    </test>
+
+    <test name="D2">
+        <groups>
+            <run>
+                <include name="d2"/>
+            </run>
+        </groups>
+
+        <packages>
+            <package name="com.company.tests.d2"/>
         </packages>
     </test>
 
