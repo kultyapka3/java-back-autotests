@@ -56,6 +56,20 @@ public class WpApiClient {
                 .delete(Config.getWpPrefix() + "/posts/{id}", postId);
     }
 
+    /** Получает пост по ID */
+    @Step("Получение поста через API с ID = {postId}")
+    public Response getPost(int postId) {
+        return RestAssured.given(spec).get(Config.getWpPrefix() + "/posts/{id}", postId);
+    }
+
+    /** Ищет посты по заголовку */
+    @Step("Получение постов через API по заголовку = {searchQuery}")
+    public Response searchPosts(String searchQuery) {
+        return RestAssured.given(spec)
+                .queryParam("search", searchQuery)
+                .get(Config.getWpPrefix() + "/posts");
+    }
+
     // Comments
     /** Создает комментарий */
     @Step("Создание комментария через API к посту с ID = {request.post}")
@@ -77,5 +91,19 @@ public class WpApiClient {
         return RestAssured.given(spec)
                 .queryParam("force", force)
                 .delete(Config.getWpPrefix() + "/comments/{id}", commentId);
+    }
+
+    /** Получает комментарий по ID */
+    @Step("Получение комментария через API с ID = {commentId}")
+    public Response getComment(int commentId) {
+        return RestAssured.given(spec).get(Config.getWpPrefix() + "/comments/{id}", commentId);
+    }
+
+    /** Ищет комментарии по ID поста */
+    @Step("Получение комментариев через API по ID поста = {idQuery}")
+    public Response getCommentsByPostId(int idQuery) {
+        return RestAssured.given(spec)
+                .queryParam("post", idQuery)
+                .get(Config.getWpPrefix() + "/comments");
     }
 }
