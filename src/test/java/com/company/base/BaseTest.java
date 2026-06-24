@@ -11,6 +11,7 @@ import org.testng.annotations.Listeners;
 import com.company.config.Config;
 import com.company.clients.DbClient;
 import com.company.clients.WpApiClient;
+import com.company.clients.YandexDiskApiClient;
 
 /** Базовый класс для всех тестов */
 @Listeners(AllureTestNg.class)
@@ -18,6 +19,7 @@ public class BaseTest {
 
     protected WpApiClient wpApiClient;
     protected DbClient dbClient;
+    protected YandexDiskApiClient ydApiClient;
 
     /** Список ID постов для очистки */
     protected final ThreadLocal<List<Integer>> postsToCleanup =
@@ -31,6 +33,7 @@ public class BaseTest {
     public void setUp() {
         wpApiClient = new WpApiClient();
         dbClient = new DbClient();
+        ydApiClient = new YandexDiskApiClient();
         postsToCleanup.get().clear();
         commentsToCleanup.get().clear();
     }

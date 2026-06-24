@@ -10,3 +10,9 @@ db.port=3306
 db.name=wordpress
 db.user=wordpress
 db.pass=wordpress
+
+# Yandex Disk
+yandex.disk.api.url=https://cloud-api.yandex.net
+yandex.disk.auth.token=yourYandexDiskAuthToken
+yandex.disk.login=yourYandexDiskLogin
+yandex.disk.name=yourYandexDiskDisplayName

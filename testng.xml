@@ -29,4 +29,16 @@
         </packages>
     </test>
 
+    <test name="D3">
+        <groups>
+            <run>
+                <include name="d3"/>
+            </run>
+        </groups>
+
+        <packages>
+            <package name="com.company.tests.d3"/>
+        </packages>
+    </test>
+
 </suite>
