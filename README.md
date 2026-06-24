@@ -122,7 +122,7 @@ mvn clean compile
 
 - **Шаги**:
     1. Отправить DELETE-запрос:
-        * На `http://localhost:8000/index.php?rest_route=/wp/v2/posts/{id}?force=true`
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/posts/{id}&force=true`
 
 - **Ожидаемый результат**:
     1. Код ответа `200 OK`
@@ -181,7 +181,7 @@ mvn clean compile
 
 - **Шаги**:
     1. Отправить DELETE-запрос:
-        * На `http://localhost:8000/index.php?rest_route=/wp/v2/posts/9999?force=true`
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/posts/9999&force=true`
 
 - **Ожидаемый результат**:
     1. Код ответа `404 Not Found`
@@ -268,7 +268,7 @@ mvn clean compile
 
 - **Шаги**:
     1. Отправить DELETE-запрос:
-        * На `http://localhost:8000/index.php?rest_route=/wp/v2/comments/{id}?force=true`
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/comments/{id}&force=true`
 
 - **Ожидаемый результат**:
     1. Код ответа `200 OK`
@@ -280,3 +280,87 @@ mvn clean compile
 - **Тестовые данные**:
     1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
     2. `force` — `true`
+
+## D2 Тест-кейсы
+
+### Тест-кейс №10. Получение существующего поста по ID
+
+- **Предусловие**:
+    1. Авторизоваться (`Firstname.Lastname:123-Test`)
+    2. Создать тестовый пост: `INSERT INTO wp_posts (post_title, post_content, post_status) VALUES 
+    ('Test Title', 'Test Content', 'publish')`
+    3. Зафиксировать `id` поста
+
+- **Шаги**:
+    1. Отправить GET-запрос:
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/posts/{id}`
+
+- **Ожидаемый результат**:
+    1. Код ответа `200 OK`
+    2. Тело ответа содержит зафиксированный `id`
+    3. Запрос `SELECT post_title, post_content FROM wp_posts WHERE ID = {id}` находит строку с
+       `post_title = Test Title`
+
+- **Постусловие**:
+    1. Удалить созданный пост: `DELETE FROM wp_posts WHERE ID = {id} OR post_parent = {id}`
+
+- **Тестовые данные**:
+    1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
+
+### Тест-кейс №11. Поиск поста по несуществующему заголовку
+
+- **Предусловие**:
+    1. Авторизоваться (`Firstname.Lastname:123-Test`)
+
+- **Шаги**:
+    1. Отправить GET-запрос:
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/posts&search=123NONEXISTENT_TITLE321`
+
+- **Ожидаемый результат**:
+    1. Код ответа `200 OK`
+    2. Тело ответа содержит пустой массив `[]`
+
+- **Тестовые данные**:
+    1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
+    2. `search` — `123NONEXISTENT_TITLE321`
+
+### Тест-кейс №12. Получение существующего комментария по ID
+
+- **Предусловие**:
+    1. Авторизоваться (`Firstname.Lastname:123-Test`)
+    2. Создать тестовый пост: `INSERT INTO wp_posts (post_title, post_content, post_status) VALUES 
+    ('Test Title', 'Test Content', 'publish')`
+    3. Создать тестовый комментарий: `INSERT INTO wp_comments (comment_post_ID, comment_author, comment_author_email, 
+    comment_content, comment_approved) VALUES ({post_id}, 'Firstname.Lastname', 'Firstname.Lastname@simbirsoft.com', 
+    'Test comment content', '1')`
+    4. Зафиксировать `id` комментария
+
+- **Шаги**:
+    1. Отправить GET-запрос:
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/comments/{id}`
+
+- **Ожидаемый результат**:
+    1. Код ответа `200 OK`
+    2. Тело ответа содержит зафиксированный `id`
+    3. Запрос `SELECT comment_author, comment_content FROM wp_comments WHERE comment_ID = {id}` находит строку с
+       `comment_author = Firstname.Lastname`
+
+- **Тестовые данные**:
+    1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
+
+### Тест-кейс №13. Получение комментариев несуществующего поста
+
+- **Предусловие**:
+    1. Авторизоваться (`Firstname.Lastname:123-Test`)
+
+- **Шаги**:
+    1. Отправить GET-запрос:
+        * На `http://localhost:8000/index.php?rest_route=/wp/v2/comments&post=9999`
+
+- **Ожидаемый результат**:
+    1. Код ответа `200 OK`
+    2. Тело ответа содержит пустой массив `[]`
+
+- **Тестовые данные**:
+    1. Basic Auth `USERNAME:PASSWORD` — `Firstname.Lastname:123-Test`
+    2. `post` — `9999`
