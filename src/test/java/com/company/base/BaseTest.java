@@ -2,8 +2,10 @@ package com.company.base;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import io.qameta.allure.testng.AllureTestNg;
+import io.restassured.response.Response;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Listeners;
@@ -12,6 +14,7 @@ import com.company.config.Config;
 import com.company.clients.DbClient;
 import com.company.clients.WpApiClient;
 import com.company.clients.YandexDiskApiClient;
+import com.company.models.yandex.TrashResourcesResponse;
 
 /** Базовый класс для всех тестов */
 @Listeners(AllureTestNg.class)
@@ -29,6 +32,10 @@ public class BaseTest {
     protected final ThreadLocal<List<Integer>> commentsToCleanup =
             ThreadLocal.withInitial(ArrayList::new);
 
+    /** Список названий папок для очистки */
+    protected final ThreadLocal<List<String>> foldersToCleanup =
+            ThreadLocal.withInitial(ArrayList::new);
+
     @BeforeMethod
     public void setUp() {
         wpApiClient = new WpApiClient();
@@ -36,6 +43,7 @@ public class BaseTest {
         ydApiClient = new YandexDiskApiClient();
         postsToCleanup.get().clear();
         commentsToCleanup.get().clear();
+        foldersToCleanup.get().clear();
     }
 
     /** Создание тестового поста */
@@ -62,6 +70,32 @@ public class BaseTest {
         return commentId;
     }
 
+    /** Создание тестовой папки */
+    protected String createTestFolder() {
+        String folderName = "Test Folder";
+        ydApiClient.createFolder(folderName);
+        foldersToCleanup.get().add(folderName);
+
+        return folderName;
+    }
+
+    /** Создание тестовой папки в корзине */
+    protected String createTestFolderInTrash() {
+        String folderName = "Test Folder";
+        ydApiClient.createFolder(folderName);
+        foldersToCleanup.get().add(folderName);
+
+        TrashResourcesResponse response =
+                ydApiClient.getTrashItems().then().extract().as(TrashResourcesResponse.class);
+
+        Optional<TrashResourcesResponse.Embedded.Items> targetItem =
+                response.get_embedded().getItems().stream()
+                        .filter(item -> folderName.equals(item.getPath()))
+                        .findFirst();
+
+        return targetItem.get().getPath();
+    }
+
     @AfterMethod
     public void tearDown() {
         for (Integer postId : postsToCleanup.get()) {
@@ -85,7 +119,38 @@ public class BaseTest {
             }
         }
 
+        for (String dirPath : foldersToCleanup.get()) {
+            int statusCode =
+                    ydApiClient.deleteFolderPermanently(dirPath).then().extract().statusCode();
+
+            if (statusCode == 404) {
+                try {
+                    TrashResourcesResponse response =
+                            ydApiClient
+                                    .getTrashItems()
+                                    .then()
+                                    .extract()
+                                    .as(TrashResourcesResponse.class);
+
+                    Optional<TrashResourcesResponse.Embedded.Items> targetItem =
+                            response.get_embedded().getItems().stream()
+                                    .filter(item -> dirPath.equals(item.getPath()))
+                                    .findFirst();
+
+                    ydApiClient.restoreFolderFromTrash(targetItem.get().getPath());
+                    ydApiClient.deleteFolderPermanently(dirPath);
+                } catch (Exception e) {
+                    System.err.println(
+                            "Не удалось удалить папку с названием = "
+                                    + dirPath
+                                    + ". Ошибка: "
+                                    + e.getMessage());
+                }
+            }
+        }
+
         postsToCleanup.remove();
         commentsToCleanup.remove();
+        foldersToCleanup.remove();
     }
 }

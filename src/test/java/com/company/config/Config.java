@@ -65,6 +65,10 @@ public class Config {
         return props.getProperty("yandex.disk.api.url");
     }
 
+    public static String getYandexDiskPrefix() {
+        return "/v1/disk/";
+    }
+
     public static String getYandexDiskAuthToken() {
         return props.getProperty("yandex.disk.auth.token");
     }

@@ -27,7 +27,7 @@ public class YandexDiskApiClient {
     /** Получает информацию о диске */
     @Step("Получение информации о диске")
     public Response getDiskInfo() {
-        return RestAssured.given(spec).get("/v1/disk/");
+        return RestAssured.given(spec).get(Config.getYandexDiskPrefix());
     }
 
     /** Пытается получить информацию о диске без токена */
@@ -41,6 +41,45 @@ public class YandexDiskApiClient {
                         .addFilter(new AllureRestAssured())
                         .build();
 
-        return RestAssured.given(noAuthSpec).get("/v1/disk/");
+        return RestAssured.given(noAuthSpec).get(Config.getYandexDiskPrefix());
+    }
+
+    /** Создает папку */
+    @Step("Создание папки с названием = {path}")
+    public Response createFolder(String path) {
+        return RestAssured.given(spec)
+                .queryParam("path", path)
+                .put(Config.getYandexDiskPrefix() + "resources");
+    }
+
+    /** Перемещает папку в корзину */
+    @Step("Перемещение в корзину папки с названием = {path}")
+    public Response deleteFolderToTrash(String path) {
+        return RestAssured.given(spec)
+                .queryParam("path", path)
+                .delete(Config.getYandexDiskPrefix() + "resources");
+    }
+
+    /** Восстанавливает папку из корзины */
+    @Step("Восстановление из корзины папки с названием = {path}")
+    public Response restoreFolderFromTrash(String path) {
+        return RestAssured.given(spec)
+                .queryParam("path", path)
+                .put(Config.getYandexDiskPrefix() + "trash/resources/restore");
+    }
+
+    /** Удаляет папку */
+    @Step("Полное удаление папки: {path}")
+    public Response deleteFolderPermanently(String path) {
+        return RestAssured.given(spec)
+                .queryParam("path", path)
+                .queryParam("permanently", "true")
+                .delete(Config.getYandexDiskPrefix() + "resources");
+    }
+
+    /** Получает информацию о ресурсах в корзине */
+    @Step("Получение информации о ресурсах в корзине")
+    public Response getTrashItems() {
+        return RestAssured.given(spec).get(Config.getYandexDiskPrefix() + "trash/resources");
     }
 }
