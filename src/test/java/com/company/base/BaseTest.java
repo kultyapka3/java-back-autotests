@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import io.qameta.allure.testng.AllureTestNg;
-import io.restassured.response.Response;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Listeners;
@@ -72,7 +71,7 @@ public class BaseTest {
 
     /** Создание тестовой папки */
     protected String createTestFolder() {
-        String folderName = "Test Folder";
+        String folderName = "TestFolder";
         ydApiClient.createFolder(folderName);
         foldersToCleanup.get().add(folderName);
 
@@ -81,16 +80,17 @@ public class BaseTest {
 
     /** Создание тестовой папки в корзине */
     protected String createTestFolderInTrash() {
-        String folderName = "Test Folder";
+        String folderName = "TestFolder";
         ydApiClient.createFolder(folderName);
         foldersToCleanup.get().add(folderName);
+        ydApiClient.deleteFolderToTrash(folderName);
 
         TrashResourcesResponse response =
                 ydApiClient.getTrashItems().then().extract().as(TrashResourcesResponse.class);
 
         Optional<TrashResourcesResponse.Embedded.Items> targetItem =
                 response.get_embedded().getItems().stream()
-                        .filter(item -> folderName.equals(item.getPath()))
+                        .filter(item -> item.getPath().contains(folderName))
                         .findFirst();
 
         return targetItem.get().getPath();
@@ -134,11 +134,13 @@ public class BaseTest {
 
                     Optional<TrashResourcesResponse.Embedded.Items> targetItem =
                             response.get_embedded().getItems().stream()
-                                    .filter(item -> dirPath.equals(item.getPath()))
+                                    .filter(item -> item.getPath().contains(dirPath))
                                     .findFirst();
 
-                    ydApiClient.restoreFolderFromTrash(targetItem.get().getPath());
-                    ydApiClient.deleteFolderPermanently(dirPath);
+                    if (targetItem.isPresent()) {
+                        ydApiClient.restoreFolderFromTrash(targetItem.get().getPath());
+                        ydApiClient.deleteFolderPermanently(dirPath);
+                    }
                 } catch (Exception e) {
                     System.err.println(
                             "Не удалось удалить папку с названием = "
