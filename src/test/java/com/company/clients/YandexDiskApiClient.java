@@ -61,7 +61,7 @@ public class YandexDiskApiClient {
     }
 
     /** Восстанавливает папку из корзины */
-    @Step("Восстановление из корзины папки с названием = {path}")
+    @Step("Восстановление из корзины папки с путем = {path}")
     public Response restoreFolderFromTrash(String path) {
         return RestAssured.given(spec)
                 .queryParam("path", path)
@@ -69,7 +69,7 @@ public class YandexDiskApiClient {
     }
 
     /** Удаляет папку */
-    @Step("Полное удаление папки: {path}")
+    @Step("Полное удаление папки c путем = {path}")
     public Response deleteFolderPermanently(String path) {
         return RestAssured.given(spec)
                 .queryParam("path", path)

@@ -35,7 +35,7 @@ public class BaseTest {
     protected final ThreadLocal<List<String>> foldersToCleanup =
             ThreadLocal.withInitial(ArrayList::new);
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setUp() {
         wpApiClient = new WpApiClient();
         dbClient = new DbClient();
@@ -96,7 +96,7 @@ public class BaseTest {
         return targetItem.get().getPath();
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown() {
         for (Integer postId : postsToCleanup.get()) {
             try {
