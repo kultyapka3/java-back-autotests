@@ -16,7 +16,8 @@ public class Config {
                 Config.class.getClassLoader().getResourceAsStream("config.properties")) {
             props.load(is);
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка при загрузке конфига из файла config.properties", e);
+            throw new RuntimeException(
+                    "Ошибка при загрузке конфига из файла config.properties: ", e);
         }
     }
 
@@ -57,5 +58,26 @@ public class Config {
 
     public static String getDbPass() {
         return props.getProperty("db.pass");
+    }
+
+    // Yandex Disk
+    public static String getYandexDiskUrl() {
+        return props.getProperty("yandex.disk.api.url");
+    }
+
+    public static String getYandexDiskPrefix() {
+        return "/v1/disk/";
+    }
+
+    public static String getYandexDiskAuthToken() {
+        return props.getProperty("yandex.disk.auth.token");
+    }
+
+    public static String getYandexDiskLogin() {
+        return props.getProperty("yandex.disk.login");
+    }
+
+    public static String getYandexDiskDisplayName() {
+        return props.getProperty("yandex.disk.name");
     }
 }
