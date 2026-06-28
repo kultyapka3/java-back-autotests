@@ -5,10 +5,12 @@ import lombok.Data;
 
 /** DTO ответа запроса ресурсов корзины в YandexDisk */
 @Data
-public class TrashResourcesResponse {
+public class ResourcesResponse {
     private String path;
     private String type;
     private String name;
+    private String mime_type;
+    private String media_type;
     private Embedded _embedded;
 
     @Data
@@ -22,7 +24,6 @@ public class TrashResourcesResponse {
             private String type;
             private String name;
             private String resource_id;
-            private String origin_path;
         }
     }
 }
