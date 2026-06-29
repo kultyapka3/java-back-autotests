@@ -1,6 +1,5 @@
 package com.company.tests.d2;
 
-import static org.hamcrest.Matchers.emptyArray;
 import static org.hamcrest.Matchers.hasSize;
 
 import io.qameta.allure.*;
