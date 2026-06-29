@@ -4,9 +4,6 @@ import static org.hamcrest.Matchers.*;
 import static org.testng.Assert.assertEquals;
 
 import io.qameta.allure.*;
-
-import io.restassured.response.Response;
-
 import org.testng.annotations.Test;
 
 import com.company.base.BaseTest;

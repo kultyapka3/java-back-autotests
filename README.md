@@ -475,3 +475,38 @@ mvn clean compile
 - **Тестовые данные**:
     1. OAuth `valid_token`
     2. `path` — `123NONEXISTENT_FOLDER321`
+
+## D7 Тест-кейс
+
+### Тест-кейс №19. Получение списка файлов
+
+- **Предусловие**:
+    1. Авторизоваться (`valid_token`)
+    2. Создать тестовую папку: `PUT https://cloud-api.yandex.net/v1/disk/resources?path=TestFolder`
+    3. Создать тестовые файлы:
+        * Сгенерировать тестовые файлы: `testData1.txt`, `testData2.txt`, `testData3.txt` с содержанием `Test data 1`,
+          `Test data 2`, `Test data 3` соответственно
+        * Получить ссылку для загрузки (повторить для каждого файла):
+          `GET https://cloud-api.yandex.net/v1/disk/resources/upload?path=TestFolder`
+        * Загрузить тестовый файл (повторить для каждого файла):
+          `PUT https://cloud-api.yandex.net/v1/disk/resources/upload?path=TestFolder&url=...`
+
+- **Шаги**:
+    1. Отправить GET-запрос:
+        * На `https://cloud-api.yandex.net/v1/disk/resources`
+        * В параметрах запроса передать: `path=TestFolder`
+
+- **Ожидаемый результат**:
+    1. Код ответа `200 OK`
+    2. Тело ответа содержит имена созданных файлов
+    3. Тело ответа строго соответствует `JSON Schema`
+
+- **Постусловие**:
+    1. Удалить созданную папку:
+       `DELETE https://cloud-api.yandex.net/v1/disk/resources?path=TestFolder&permanently=true`
+
+- **Тестовые данные**:
+    1. OAuth `valid_token`
+    2. `path` — `TestFolder`
+    3. `name` — `testData1.txt`, `testData2.txt`, `testData3.txt`
+    4. `content` — `Test data 1`, `Test data 2`, `Test data 3`

@@ -1,6 +1,8 @@
 package com.company.base;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -148,6 +150,48 @@ public class BaseTest {
         ydApiClient.uploadFileByLink(uploadRequest).then().statusCode(201);
 
         return filePath;
+    }
+
+    /** Генерация и загрузка трех тестовых файлов */
+    protected String uploadedFilesPath() {
+        String testFolder = createTestFolder();
+        List<FileDataModel> filesToCreate =
+                List.of(
+                        FileDataModel.builder()
+                                .name("testData1.txt")
+                                .content("Test data 1".getBytes())
+                                .build(),
+                        FileDataModel.builder()
+                                .name("testData2.txt")
+                                .content("Test data 2".getBytes())
+                                .build(),
+                        FileDataModel.builder()
+                                .name("testData3.txt")
+                                .content("Test data 3".getBytes())
+                                .build());
+
+        for (var file : filesToCreate) {
+            String filePath = testFolder + "/" + file.getName();
+
+            UploadLinkResponse uploadLinkResponse =
+                    ydApiClient
+                            .getUploadLink(filePath)
+                            .then()
+                            .statusCode(200)
+                            .extract()
+                            .as(UploadLinkResponse.class);
+
+            UploadFileRequest uploadRequest =
+                    UploadFileRequest.builder()
+                            .url(uploadLinkResponse.getHref())
+                            .content(file.getContent())
+                            .filename(file.getName())
+                            .build();
+
+            ydApiClient.uploadFileByLink(uploadRequest).then().statusCode(201);
+        }
+
+        return testFolder;
     }
 
     @AfterMethod(alwaysRun = true)
