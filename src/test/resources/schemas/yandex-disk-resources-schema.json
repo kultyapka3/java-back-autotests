@@ -14,10 +14,18 @@
       "type": "string"
     },
     "type": {
-      "type": "string"
+      "type": "string",
+      "enum": [
+        "document",
+        "file",
+        "dir"
+      ]
     },
     "name": {
-      "type": "string"
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9._-]+$",
+      "minLength": 1,
+      "maxLength": 255
     },
     "created": {
       "type": [
@@ -35,7 +43,9 @@
       "type": [
         "integer",
         "null"
-      ]
+      ],
+      "minimum": 0,
+      "maximum": 10737418240
     },
     "mime_type": {
       "type": [
@@ -102,6 +112,8 @@
         },
         "items": {
           "type": "array",
+          "minItems": 0,
+          "maxItems": 100,
           "items": {
             "type": "object",
             "required": [
