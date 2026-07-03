@@ -53,4 +53,28 @@
         </packages>
     </test>
 
+    <test name="D6" parallel="none">
+        <groups>
+            <run>
+                <include name="d6"/>
+            </run>
+        </groups>
+
+        <packages>
+            <package name="com.company.tests.d6"/>
+        </packages>
+    </test>
+
+    <test name="D7" parallel="none">
+        <groups>
+            <run>
+                <include name="d7"/>
+            </run>
+        </groups>
+
+        <packages>
+            <package name="com.company.tests.d7"/>
+        </packages>
+    </test>
+
 </suite>

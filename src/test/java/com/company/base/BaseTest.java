@@ -13,7 +13,10 @@ import com.company.config.Config;
 import com.company.clients.DbClient;
 import com.company.clients.WpApiClient;
 import com.company.clients.YandexDiskApiClient;
-import com.company.models.yandex.TrashResourcesResponse;
+import com.company.models.yandex.ResourcesResponse;
+import com.company.models.yandex.FileDataModel;
+import com.company.models.yandex.UploadFileRequest;
+import com.company.models.yandex.UploadLinkResponse;
 
 /** Базовый класс для всех тестов */
 @Listeners(AllureTestNg.class)
@@ -85,15 +88,108 @@ public class BaseTest {
         foldersToCleanup.get().add(folderName);
         ydApiClient.deleteFolderToTrash(folderName);
 
-        TrashResourcesResponse response =
-                ydApiClient.getTrashItems().then().extract().as(TrashResourcesResponse.class);
+        ResourcesResponse response =
+                ydApiClient.getTrashItems().then().extract().as(ResourcesResponse.class);
 
-        Optional<TrashResourcesResponse.Embedded.Items> targetItem =
+        Optional<ResourcesResponse.Embedded.Items> targetItem =
                 response.get_embedded().getItems().stream()
                         .filter(item -> item.getPath().contains(folderName))
                         .findFirst();
 
         return targetItem.get().getPath();
+    }
+
+    /** Генерация тестового файла */
+    protected FileDataModel createTestFile() {
+        String fileName = "data.txt";
+        byte[] fileContent = "username=SDET\npassword=secret_key".getBytes();
+
+        return new FileDataModel(fileName, fileContent);
+    }
+
+    /** Создание папок input_data и output_data */
+    protected List<String> createInputAndOutputFolders() {
+        String inputPath = "input_data";
+        String outputPath = "output_data";
+
+        ydApiClient.createFolder(inputPath);
+        foldersToCleanup.get().add(inputPath);
+
+        ydApiClient.createFolder(outputPath);
+        foldersToCleanup.get().add(outputPath);
+
+        return List.of(inputPath, outputPath);
+    }
+
+    /** Загрузка тестового файла в sdet_data */
+    protected String uploadedFilePath() {
+        String inputPath = "sdet_data";
+        ydApiClient.createFolder(inputPath);
+        foldersToCleanup.get().add(inputPath);
+
+        FileDataModel testFile = createTestFile();
+        String filePath = inputPath + "/" + testFile.getName();
+
+        UploadLinkResponse uploadLinkResponse =
+                ydApiClient
+                        .getUploadLink(filePath)
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .as(UploadLinkResponse.class);
+
+        UploadFileRequest uploadRequest =
+                UploadFileRequest.builder()
+                        .url(uploadLinkResponse.getHref())
+                        .content(testFile.getContent())
+                        .filename(testFile.getName())
+                        .build();
+
+        ydApiClient.uploadFileByLink(uploadRequest).then().statusCode(201);
+
+        return filePath;
+    }
+
+    /** Генерация и загрузка трех тестовых файлов */
+    protected String uploadedFilesPath() {
+        String testFolder = createTestFolder();
+        List<FileDataModel> filesToCreate =
+                List.of(
+                        FileDataModel.builder()
+                                .name("testData1.txt")
+                                .content("Test data 1".getBytes())
+                                .build(),
+                        FileDataModel.builder()
+                                .name("testData2.txt")
+                                .content("Test data 2".getBytes())
+                                .build(),
+                        FileDataModel.builder()
+                                .name("testData3.txt")
+                                .content("Test data 3".getBytes())
+                                .build());
+
+        for (var file : filesToCreate) {
+            String filePath = testFolder + "/" + file.getName();
+
+            UploadLinkResponse uploadLinkResponse =
+                    ydApiClient
+                            .getUploadLink(filePath)
+                            .then()
+                            .statusCode(200)
+                            .extract()
+                            .as(UploadLinkResponse.class);
+
+            UploadFileRequest uploadRequest =
+                    UploadFileRequest.builder()
+                            .url(uploadLinkResponse.getHref())
+                            .content(file.getContent())
+                            .filename(file.getName())
+                            .build();
+
+            ydApiClient.uploadFileByLink(uploadRequest).then().statusCode(201);
+        }
+
+        return testFolder;
     }
 
     @AfterMethod(alwaysRun = true)
@@ -125,14 +221,14 @@ public class BaseTest {
 
             if (statusCode == 404) {
                 try {
-                    TrashResourcesResponse response =
+                    ResourcesResponse response =
                             ydApiClient
                                     .getTrashItems()
                                     .then()
                                     .extract()
-                                    .as(TrashResourcesResponse.class);
+                                    .as(ResourcesResponse.class);
 
-                    Optional<TrashResourcesResponse.Embedded.Items> targetItem =
+                    Optional<ResourcesResponse.Embedded.Items> targetItem =
                             response.get_embedded().getItems().stream()
                                     .filter(item -> item.getPath().contains(dirPath))
                                     .findFirst();

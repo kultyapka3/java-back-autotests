@@ -1,0 +1,345 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "YandexDiskResourcesResponse",
+  "type": "object",
+  "required": [
+    "path",
+    "type",
+    "name",
+    "_embedded"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "document",
+        "file",
+        "dir"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-zA-Z0-9._-]+$",
+      "minLength": 1,
+      "maxLength": 255
+    },
+    "created": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "modified": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "size": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0,
+      "maximum": 10737418240
+    },
+    "mime_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "md5": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sha256": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "preview": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "public_key": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "public_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "_embedded": {
+      "type": "object",
+      "required": [
+        "total",
+        "limit",
+        "offset",
+        "path",
+        "sort",
+        "items"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "total": {
+          "type": "integer"
+        },
+        "limit": {
+          "type": "integer"
+        },
+        "offset": {
+          "type": "integer"
+        },
+        "path": {
+          "type": "string"
+        },
+        "sort": {
+          "type": "string"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 100,
+          "items": {
+            "type": "object",
+            "required": [
+              "path",
+              "type",
+              "name"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "path": {
+                "type": "string"
+              },
+              "type": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "created": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "modified": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "size": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "mime_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "md5": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sha256": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "preview": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "media_type": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "file": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "resource_id": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "revision": {
+                "type": [
+                  "integer",
+                  "null"
+                ]
+              },
+              "comment_ids": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "public_resource": {
+                    "type": "string"
+                  },
+                  "private_resource": {
+                    "type": "string"
+                  }
+                }
+              },
+              "exif": {
+                "type": [
+                  "object",
+                  "null"
+                ]
+              },
+              "antivirus_status": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "sizes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "url": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "media_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "file": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "resource_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "share": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "is_owned": {
+          "type": "boolean"
+        },
+        "is_root": {
+          "type": "boolean"
+        },
+        "rights": {
+          "type": "string"
+        }
+      }
+    },
+    "revision": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "comment_ids": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "public_resource": {
+          "type": "string"
+        },
+        "private_resource": {
+          "type": "string"
+        }
+      }
+    },
+    "custom_properties": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "exif": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "antivirus_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "photoslice_time": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "sizes": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
